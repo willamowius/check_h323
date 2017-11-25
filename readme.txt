@@ -5,11 +5,11 @@ Author: Jan Willamowius <jan@willamowius.de>
 		Relaxedcommunications GmbH
 		https://www.willamowius.com/
 
-License: GPL (http://www.gnu.org/copyleft/gpl.html)
+License: GPL (https://www.gnu.org/copyleft/gpl.html)
 
 Homepage: https://www.gnugk.org/nagios-h323.html
 
-To compile use H323Plus and PTLib and say "make optnoshared". I use H323Plus 1.26.5 and PTLib 2.10.9.
+To compile use H323Plus and PTLib and say "make optnoshared".
 
 Usage: check_h323 [-l|-g] [-p port] host
 

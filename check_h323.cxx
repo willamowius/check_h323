@@ -1,3 +1,14 @@
+/*
+ *
+ * check_h323 - A H.323 monitoring plugin
+ *
+ * License: GPL
+ *
+ * (c) Relaxed Communications GmbH, 2009-2017
+ *     jan@willamowius.de, https://www.willamowius.com
+ *
+ */
+
 #include <ptlib.h>
 #include <ptlib/sockets.h>
 #include <ptclib/asner.h>
@@ -46,7 +57,7 @@ void Client::Main()
         gk_addr = PIPSocket::Address(result->ai_family, result->ai_addrlen, result->ai_addr);
 	} else {
 		cout << "CRITICAL - DNS lookup failed for " << hostname << endl;
-		exit(2);
+		exit(1);
 	}
 	freeaddrinfo(result);
 
@@ -123,16 +134,18 @@ void Client::SendReleaseComplete()
 	{
 		cout << "CRITICAL - Can not connect to the gatekeeper " << gk_addr << endl;
 		sock.Close();
-		exit(2);
+		exit(1);
 	}
 
     if (!WriteTPKT(sock, wtbuf)) {
 		cout << "CRITICAL - Can not send to the gatekeeper " << gk_addr << endl;
 		sock.Close();
-		exit(2);
+		exit(1);
     }
 
     // TODO: check reply
+	cout << "OK - from " << gk_addr << endl;
+	exit(0);
 }
 
 void Client::SendSetup()
@@ -172,16 +185,18 @@ void Client::SendSetup()
 	{
 		cout << "CRITICAL - Can not connect to the gatekeeper " << gk_addr << endl;
 		sock.Close();
-		exit(2);
+		exit(1);
 	}
 
     if (!WriteTPKT(sock, wtbuf)) {
 		cout << "CRITICAL - Can not send to the gatekeeper " << gk_addr << endl;
 		sock.Close();
-		exit(2);
+		exit(1);
     }
 
     // TODO: check reply
+	cout << "OK - from " << gk_addr << endl;
+	exit(0);
 }
 
 void Client::SendGRQ()
@@ -218,7 +233,7 @@ void Client::SendGRQ()
 	{
 		cout << "CRITICAL - Can not connect to the gatekeeper " << gk_addr << endl;
 		sock.Close();
-		exit(2);
+		exit(1);
 	}
 
 	sock.Write(wtstrm.GetPointer(), wtstrm.GetSize());
@@ -226,7 +241,7 @@ void Client::SendGRQ()
 	sock.SetReadTimeout(GetReadTimeout());
 	if (!sock.ReadFrom(rdstrm.GetPointer(), rdstrm.GetSize(), gk_addr, gk_port)) {
 		cout << "CRITICAL - Timeout while waiting for GCF/GRJ" << endl;
-		exit(2);
+		exit(1);
 	}
 
 	grq_rpl.Decode(rdstrm);
@@ -269,7 +284,7 @@ void Client::SendLRQ()
    if (!sock.Connect(gk_addr)) {
 		cout << "CRITICAL - Can not connect to the gatekeeper " << gk_addr << endl;
 		sock.Close();
-		exit(2);
+		exit(1);
     }
 
     sock.Write(wtstrm.GetPointer(), wtstrm.GetSize());

@@ -3,7 +3,7 @@ check_h323 - A Nagios plugin to monitor H.323 devices
 
 Author: Jan Willamowius <jan@willamowius.de>
 		Relaxedcommunications GmbH
-		http://www.willamowius.com/
+		https://www.willamowius.com/
 
 License: GPL (http://www.gnu.org/copyleft/gpl.html)
 

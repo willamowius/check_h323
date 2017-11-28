@@ -17,3 +17,8 @@ Options:
 -g	send GRQ to host
 -l	send LRQ to host
 
+
+As Docker health check:
+
+HEALTHCHECK CMD /usr/local/bin/check_h323 127.0.0.1
+

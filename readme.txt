@@ -1,5 +1,5 @@
-check_h323 - A Nagios plugin to monitor H.323 devices
-=====================================================
+check_h323 - A Nagios/Icinga/Docker plugin to monitor H.323 devices
+===================================================================
 
 Author: Jan Willamowius <jan@willamowius.de>
 		Relaxedcommunications GmbH

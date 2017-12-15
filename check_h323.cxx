@@ -220,7 +220,7 @@ void Client::SendGRQ()
 
 	grq.IncludeOptionalField(grq.e_endpointAlias);
 	grq.m_endpointAlias.SetSize(1);
-	H323SetAliasAddress(PString("Nagios Monitoring"), grq.m_endpointAlias[0]);
+	H323SetAliasAddress(PString("check_h323"), grq.m_endpointAlias[0]);
 
 	PBYTEArray rdbuf(2048), wtbuf(2048);
 	PPER_Stream rdstrm(rdbuf), wtstrm(wtbuf);
@@ -269,7 +269,7 @@ void Client::SendLRQ()
 	ipAddress.m_port  = gk_port;
 
     lrq.m_destinationInfo.SetSize(1);
-    H323SetAliasAddress(PString("Nagios Monotoring"), lrq.m_destinationInfo[0]);
+    H323SetAliasAddress(PString("check_h323"), lrq.m_destinationInfo[0]);
 
     // TODO: add H.460.18 so GK answers to apparent IP ?
 

@@ -58,7 +58,7 @@ void Client::Main()
 	args.Parse("glp:");
 	if (args.GetCount() != 1) {
         cout << "Usage: check_h323 [-l|-g [-p port] host" << endl;
-        exit(1);
+        _exit(1);
 	}
 
     PString hostname = args.GetParameter(0);
@@ -70,7 +70,7 @@ void Client::Main()
         gk_addr = PIPSocket::Address(result->ai_family, result->ai_addrlen, result->ai_addr);
 	} else {
 		cout << "CRITICAL - DNS lookup failed for " << hostname << endl;
-		exit(1);
+		_exit(1);
 	}
 	freeaddrinfo(result);
 
@@ -146,7 +146,7 @@ void Client::SendGRQ()
 	{
 		cout << "CRITICAL - Can not connect to the gatekeeper " << gk_addr << endl;
 		sock.Close();
-		exit(1);
+		_exit(1);
 	}
 
 	sock.Write(wtstrm.GetPointer(), wtstrm.GetSize());
@@ -154,14 +154,14 @@ void Client::SendGRQ()
 	sock.SetReadTimeout(GetReadTimeout());
 	if (!sock.ReadFrom(rdstrm.GetPointer(), rdstrm.GetSize(), gk_addr, gk_port)) {
 		cout << "CRITICAL - Timeout while waiting for GCF/GRJ" << endl;
-		exit(1);
+		_exit(1);
 	}
 
 	grq_rpl.Decode(rdstrm);
 	sock.Close();
 
 	cout << "OK - " << grq_rpl.GetTagName() << " from " << gk_addr << endl;
-	exit(0);
+	_exit(0);
 }
 
 void Client::SendLRQ()
@@ -191,7 +191,7 @@ void Client::SendLRQ()
    if (!sock.Connect(gk_addr)) {
 		cout << "CRITICAL - Can not connect to the gatekeeper " << gk_addr << endl;
 		sock.Close();
-		exit(1);
+		_exit(1);
     }
 
     sock.Write(wtstrm.GetPointer(), wtstrm.GetSize());
@@ -205,9 +205,9 @@ void Client::SendLRQ()
     if ((lrq_rpl.GetTag() == H225_RasMessage::e_locationConfirm)
 		|| (lrq_rpl.GetTag() == H225_RasMessage::e_locationReject)) {
 		cout << "OK - " << lrq_rpl.GetTagName() << " from " << gk_addr << endl;
-		exit(0);
+		_exit(0);
 	} else {
 		cout << "CRITICAL - no answer" << endl;
-		exit(1);
+		_exit(1);
 	}
 }

@@ -74,6 +74,10 @@ void Client::Main()
 	}
 	freeaddrinfo(result);
 
+	// prefer IPv6 for own address if we connect to IPv6 destination
+    if (gk_addr.GetVersion() == 6)
+        PIPSocket::SetDefaultIpAddressFamilyV6();
+
     gk_port = 1719;
     if (args.HasOption('p')) {
         gk_port = args.GetOptionString('p').AsUnsigned();

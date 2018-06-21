@@ -175,9 +175,7 @@ void Client::SendLRQ()
     lrq.m_replyAddress = SocketToH225TransportAddr(my_addr, gk_port);
 
     lrq.m_destinationInfo.SetSize(1);
-    H323SetAliasAddress(PString("check_h323"), lrq.m_destinationInfo[0]);
-
-    // TODO: add H.460.18 so GK answers to apparent IP ?
+    H323SetAliasAddress(PString("gatekeeper-monitoring-check"), lrq.m_destinationInfo[0]);
 
     // Send LRQ
     PBYTEArray rdbuf(2048), wtbuf(2048);

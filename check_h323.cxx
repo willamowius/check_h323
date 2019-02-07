@@ -141,6 +141,7 @@ void Client::SendGRQ()
     grq_ras.Encode(wtstrm);
     wtstrm.CompleteEncoding();
 
+    PTime startTime;
     PUDPSocket sock(gk_port);
     if (!sock.Connect(gk_addr)) {
         cout << "CRITICAL - Can not connect to the gatekeeper " << gk_addr << endl;
@@ -159,7 +160,8 @@ void Client::SendGRQ()
     grq_rpl.Decode(rdstrm);
     sock.Close();
 
-    cout << "OK - " << grq_rpl.GetTagName() << " from " << gk_addr << endl;
+    double responseTime = PTime().GetMicrosecond() - startTime.GetMicrosecond();
+    cout << "OK - " << grq_rpl.GetTagName() << " from " << gk_addr << " | responseTime=" << (responseTime / (1000 * 1000)) << "s" << endl;
     _exit(0);
 }
 
@@ -184,6 +186,7 @@ void Client::SendLRQ()
     lrq_ras.Encode(wtstrm);
     wtstrm.CompleteEncoding();
 
+    PTime startTime;
     PUDPSocket sock(gk_port);
     if (!sock.Connect(gk_addr)) {
         cout << "CRITICAL - Can not connect to the gatekeeper " << gk_addr << endl;
@@ -199,9 +202,10 @@ void Client::SendLRQ()
     lrq_rpl.Decode(rdstrm);
     sock.Close();
 
+    double responseTime = PTime().GetMicrosecond() - startTime.GetMicrosecond();
     if ((lrq_rpl.GetTag() == H225_RasMessage::e_locationConfirm)
         || (lrq_rpl.GetTag() == H225_RasMessage::e_locationReject)) {
-        cout << "OK - " << lrq_rpl.GetTagName() << " from " << gk_addr << endl;
+        cout << "OK - " << lrq_rpl.GetTagName() << " from " << gk_addr << " | responseTime=" << (responseTime / (1000 * 1000)) << "s" << endl;
         _exit(0);
     } else {
         cout << "CRITICAL - no answer" << endl;

@@ -161,7 +161,7 @@ void Client::SendGRQ()
     sock.Close();
 
     double responseTime = PTime().GetMicrosecond() - startTime.GetMicrosecond();
-    cout << "OK - " << grq_rpl.GetTagName() << " from " << gk_addr << " | responseTime=" << (responseTime / (1000 * 1000)) << "s" << endl;
+    cout << "OK - " << grq_rpl.GetTagName() << " from " << gk_addr << " | responseTime=" << abs(responseTime / (1000 * 1000)) << "s" << endl;
     _exit(0);
 }
 
@@ -205,7 +205,7 @@ void Client::SendLRQ()
     double responseTime = PTime().GetMicrosecond() - startTime.GetMicrosecond();
     if ((lrq_rpl.GetTag() == H225_RasMessage::e_locationConfirm)
         || (lrq_rpl.GetTag() == H225_RasMessage::e_locationReject)) {
-        cout << "OK - " << lrq_rpl.GetTagName() << " from " << gk_addr << " | responseTime=" << (responseTime / (1000 * 1000)) << "s" << endl;
+        cout << "OK - " << lrq_rpl.GetTagName() << " from " << gk_addr << " | responseTime=" << abs(responseTime / (1000 * 1000)) << "s" << endl;
         _exit(0);
     } else {
         cout << "CRITICAL - no answer" << endl;

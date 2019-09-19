@@ -17,7 +17,8 @@ extraction:
       - "cd h323plus-master"
       - "export OPENH323DIR=$(pwd)"
       - "./configure --enable-h235 --enable-h46017 --enable-h46026 --enable-h46019m"
-      - "VERBOSE=1 make optnoshared"
+      - "make optnoshared"
       - "cd .."
-      - "VERBOSE=1 make optnoshared"
+    index:
+      build_command: "make optnoshared"
 

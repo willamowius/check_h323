@@ -20,5 +20,5 @@ extraction:
       - "make optnoshared"
       - "cd .."
     index:
-      build_command: "make optnoshared"
+      build_command: "PTLIBDIR=$(pwd)/ptlib-master  OPENH323DIR=$(pwd)/h323plus-master make optnoshared"
 

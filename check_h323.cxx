@@ -4,7 +4,7 @@
  *
  * License: GPL
  *
- * (c) Relaxed Communications GmbH, 2009-2018
+ * (c) Relaxed Communications GmbH, 2009-2022
  *     jan@willamowius.de, https://www.willamowius.com
  *
  */
@@ -16,7 +16,7 @@
 
 const char H225_ProtocolID[] = "0.0.8.2250.0.2";
 
-// convert a socket IP address into an H225 transport address
+// convert a socket IP address into an H.225 transport address
 H225_TransportAddress SocketToH225TransportAddr(const PIPSocket::Address & Addr, WORD Port)
 {
     H225_TransportAddress Result;
@@ -57,7 +57,7 @@ void Client::Main()
     PArgList & args = GetArguments();
     args.Parse("glp:");
     if (args.GetCount() != 1) {
-        cout << "Usage: check_h323 [-l|-g [-p port] host" << endl;
+        cout << "Usage: check_h323 [-l|-g [-p gk-port] host" << endl;
         _exit(1);
     }
 
@@ -121,6 +121,14 @@ bool WriteTPKT(PTCPSocket & sock, const PBYTEArray & wtbuf)
 
 void Client::SendGRQ()
 {
+    PTime startTime;
+    PUDPSocket sock(gk_port);
+    if (!sock.Connect(gk_addr)) {
+        cout << "CRITICAL - Can not connect to the gatekeeper " << gk_addr << endl;
+        sock.Close();
+        _exit(1);
+    }
+
     H225_RasMessage grq_ras, grq_rpl;
     grq_ras.SetTag(H225_RasMessage::e_gatekeeperRequest);
     H225_GatekeeperRequest & grq = grq_ras;
@@ -128,7 +136,10 @@ void Client::SendGRQ()
     grq.m_requestSeqNum.SetValue(1);
     grq.m_protocolIdentifier.SetValue(H225_ProtocolID);
 
-    grq.m_rasAddress = SocketToH225TransportAddr(my_addr, gk_port);
+    Address local_ip;
+    WORD local_port = gk_port;
+    sock.GetLocalAddress(local_ip, local_port);
+    grq.m_rasAddress = SocketToH225TransportAddr(my_addr, local_port);
     grq.m_endpointType.IncludeOptionalField(grq.m_endpointType.e_terminal);
 
     grq.IncludeOptionalField(grq.e_endpointAlias);
@@ -140,14 +151,6 @@ void Client::SendGRQ()
 
     grq_ras.Encode(wtstrm);
     wtstrm.CompleteEncoding();
-
-    PTime startTime;
-    PUDPSocket sock(gk_port);
-    if (!sock.Connect(gk_addr)) {
-        cout << "CRITICAL - Can not connect to the gatekeeper " << gk_addr << endl;
-        sock.Close();
-        _exit(1);
-    }
 
     sock.Write(wtstrm.GetPointer(), wtstrm.GetSize());
 
@@ -167,6 +170,14 @@ void Client::SendGRQ()
 
 void Client::SendLRQ()
 {
+    PTime startTime;
+    PUDPSocket sock(gk_port);
+    if (!sock.Connect(gk_addr)) {
+        cout << "CRITICAL - Can not connect to the gatekeeper " << gk_addr << endl;
+        sock.Close();
+        _exit(1);
+    }
+
     H225_RasMessage lrq_ras, lrq_rpl;
     lrq_ras.SetTag(H225_RasMessage::e_locationRequest);
     H225_LocationRequest & lrq = lrq_ras;
@@ -174,7 +185,10 @@ void Client::SendLRQ()
     lrq.m_requestSeqNum.SetValue(1);
 
     // set replyAddress (mandatory)
-    lrq.m_replyAddress = SocketToH225TransportAddr(my_addr, gk_port);
+    Address local_ip;
+    WORD local_port = gk_port;
+    sock.GetLocalAddress(local_ip, local_port);
+    lrq.m_replyAddress = SocketToH225TransportAddr(my_addr, local_port);
 
     lrq.m_destinationInfo.SetSize(1);
     H323SetAliasAddress(PString("gatekeeper-monitoring-check"), lrq.m_destinationInfo[0]);
@@ -185,14 +199,6 @@ void Client::SendLRQ()
 
     lrq_ras.Encode(wtstrm);
     wtstrm.CompleteEncoding();
-
-    PTime startTime;
-    PUDPSocket sock(gk_port);
-    if (!sock.Connect(gk_addr)) {
-        cout << "CRITICAL - Can not connect to the gatekeeper " << gk_addr << endl;
-        sock.Close();
-        _exit(1);
-    }
 
     sock.Write(wtstrm.GetPointer(), wtstrm.GetSize());
 

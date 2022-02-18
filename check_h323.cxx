@@ -48,6 +48,7 @@ protected:
 
     WORD gk_port;
     Address gk_addr, my_addr;
+    unsigned timeout;
 };
 
 PCREATE_PROCESS(Client)
@@ -55,9 +56,9 @@ PCREATE_PROCESS(Client)
 void Client::Main()
 {
     PArgList & args = GetArguments();
-    args.Parse("glp:");
+    args.Parse("glp:t:");
     if (args.GetCount() != 1) {
-        cout << "Usage: check_h323 [-l|-g [-p gk-port] host" << endl;
+        cout << "Usage: check_h323 [-l|-g [-p gk-port] [-t timeout] host" << endl;
         _exit(1);
     }
 
@@ -83,10 +84,15 @@ void Client::Main()
         gk_port = args.GetOptionString('p').AsUnsigned();
     }
 
+    timeout = 3 * 1000; // default: 3 sec
+    if (args.HasOption('t')) {
+        timeout = args.GetOptionString('t').AsUnsigned();
+    }
+
     GetHostAddress(my_addr);
 
     // Read-Timeout
-    SetReadTimeout(PTimeInterval(3 * 1000));
+    SetReadTimeout(PTimeInterval(timeout));
 
     if (args.HasOption('l')) {
         SendLRQ();
